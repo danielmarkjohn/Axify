@@ -3,4 +3,6 @@ export type AppType = {
   name: string
   icon: string
   link: string
+  category: 'Free' | 'Paid' | 'Tech' | 'Living' | 'Tools'
+  price?: number
 }
