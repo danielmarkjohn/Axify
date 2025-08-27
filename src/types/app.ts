@@ -5,4 +5,6 @@ export type AppType = {
   link: string
   category: 'Free' | 'Paid' | 'Tech' | 'Living' | 'Tools'
   price?: number
+  description?: string
+  tags?: string[]
 }

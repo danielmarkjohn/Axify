@@ -3,38 +3,38 @@ import { AppType } from '../types/app'
 export const defaultApps: AppType[] = [
   {
     id: '1',
-    name: 'Gaming Dashboard',
-    icon: 'https://via.placeholder.com/64',
-    link: 'https://steam-dashboard-neon.vercel.app/',
-    category: 'Tech',
+    name: 'Gaming',
+    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/gaming',
+    link: 'https://gaming.axsphere.in/',
+    category: 'Free',
+    description: 'Track your Game stats and game library with rich charts.',
+    tags: ['games', 'steam', 'charts']
   },
   {
     id: '2',
-    name: 'AxTools Pro',
-    icon: 'https://via.placeholder.com/64',
-    link: 'https://ax-gaming-sepia.vercel.app/',
-    category: 'Tools',
+    name: 'AxTools',
+    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/tools',
+    link: 'https://tools.axsphere.in/',
+    category: 'Free',
+    description: 'Advanced toolbox for automation and productivity.',
+    tags: ['productivity', 'automation']
   },
   {
     id: '3',
-    name: 'Axsphere',
-    icon: 'https://via.placeholder.com/64',
+    name: 'Hub',
+    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/axsphere',
     link: 'https://axsphere.in/',
-    category: 'Tech',
+    category: 'Free',
+    description: 'Discover AI tools and integrations from Axsphere.',
+    tags: ['ai', 'integrations']
   },
-  {
+    {
     id: '4',
-    name: 'Photo Editor Pro',
-    icon: 'https://via.placeholder.com/64',
-    link: 'https://example.com/photo',
-    category: 'Paid',
-    price: 9.99,
-  },
-  {
-    id: '5',
-    name: 'Recipe Manager',
-    icon: 'https://via.placeholder.com/64',
-    link: 'https://example.com/recipes',
-    category: 'Living',
-  },
+    name: 'Store',
+    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/store',
+    link: 'https://store.axsphere.in/',
+    category: 'Free',
+    description: 'Discover All Apps/Tools from Axsphere.',
+    tags: ['store', 'apps']
+  }
 ]
