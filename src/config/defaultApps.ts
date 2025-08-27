@@ -3,7 +3,7 @@ import { AppType } from '../types/app'
 export const defaultApps: AppType[] = [
   {
     id: '1',
-    name: 'Gaming',
+    name: 'AxGaming',
     icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/gaming',
     link: 'https://gaming.axsphere.in/',
     category: 'Free',
@@ -21,7 +21,7 @@ export const defaultApps: AppType[] = [
   },
   {
     id: '3',
-    name: 'Hub',
+    name: 'AxHub',
     icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/axsphere',
     link: 'https://axsphere.in/',
     category: 'Free',
@@ -30,7 +30,7 @@ export const defaultApps: AppType[] = [
   },
     {
     id: '4',
-    name: 'Store',
+    name: 'Axify Store',
     icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/store',
     link: 'https://store.axsphere.in/',
     category: 'Free',

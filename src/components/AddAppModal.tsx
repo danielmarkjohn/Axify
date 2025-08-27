@@ -102,7 +102,7 @@ export default function AddAppModal({ isOpen, onClose }: { isOpen: boolean; onCl
               <input
                 className="w-full p-2 rounded border border-border bg-background"
                 value={Array.isArray(form.tags) ? (form.tags as string[]).join(', ') : (form.tags as any) || ''}
-                onChange={(e) => setForm((f) => ({ ...f, tags: e.target.value }))}
+                onChange={(e) => setForm((f: any) => ({ ...f, tags: e.target.value }))}
               />
             </div>
           </div>
