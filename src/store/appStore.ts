@@ -1,13 +1,20 @@
 import { create } from 'zustand'
 import { AppType } from '../types/app'
+import { Wallpaper } from '../types/wallpaper'
 import { defaultApps } from '../config/defaultApps'
+import { defaultWallpapers } from '../config/defaultWallpapers'
 
 type State = {
+  // Apps
   apps: AppType[]
   favorites: Record<string, boolean>
   toggleFavorite: (id: string) => void
   addApp: (app: AppType) => void
   removeApp: (id: string) => void
+  // Wallpapers
+  wallpapers: Wallpaper[]
+  addWallpaper: (wall: Wallpaper) => void
+  removeWallpaper: (id: string) => void
 }
 
 const loadFavorites = (): Record<string, boolean> => {
@@ -28,6 +35,7 @@ const persistFavorites = (fav: Record<string, boolean>) => {
 export const useStore = create<State>((set, get) => ({
   apps: defaultApps,
   favorites: loadFavorites(),
+  wallpapers: defaultWallpapers,
   toggleFavorite: (id) => {
     const current = { ...get().favorites }
     current[id] = !current[id]
@@ -43,4 +51,14 @@ export const useStore = create<State>((set, get) => ({
       return { apps: [...state.apps, app] }
     }),
   removeApp: (id) => set((state) => ({ apps: state.apps.filter((a) => a.id !== id) })),
+  addWallpaper: (wall) =>
+    set((state) => {
+      const exists = state.wallpapers.find((w) => w.id === wall.id)
+      if (exists) {
+        return { wallpapers: state.wallpapers.map((w) => (w.id === wall.id ? wall : w)) }
+      }
+      return { wallpapers: [...state.wallpapers, wall] }
+    }),
+  removeWallpaper: (id) =>
+    set((state) => ({ wallpapers: state.wallpapers.filter((w) => w.id !== id) })),
 }))

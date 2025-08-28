@@ -5,19 +5,24 @@ import AdminPanel from './AdminPanel'
 import ThemeToggle from '../components/ThemeToggle'
 import DetailsModal from '../components/DetailsModal'
 import AddAppModal from '../components/AddAppModal'
+import WallpaperCard from '../components/WallpaperCard'
 import { appConfig } from '../config/appConfig'
 import type { AppType } from '../types/app'
+import type { Wallpaper } from '../types/wallpaper'
 
 export default function App() {
   const [adminMode, setAdminMode] = useState(false)
+  const [primary, setPrimary] = useState<'apps' | 'wallpapers'>('apps')
   const [selectedCategory, setSelectedCategory] = useState<string>(appConfig.text.allCategory)
   const [sortBy, setSortBy] = useState<'name' | 'category' | 'price'>('name')
   const apps = useStore((s) => s.apps)
   const favorites = useStore((s) => s.favorites)
+  const wallpapers = useStore((s) => s.wallpapers)
 
   const categories = [appConfig.text.allCategory, ...appConfig.categories]
 
   const [search, setSearch] = useState('')
+  const [wallSearch, setWallSearch] = useState('')
   const [showAdd, setShowAdd] = useState(false)
   const [onlyFavs, setOnlyFavs] = useState(false)
   const [detailsApp, setDetailsApp] = useState<AppType | null>(null)
@@ -87,7 +92,13 @@ export default function App() {
   return (
     <div className="min-h-screen p-2 sm:p-4 bg-background text-foreground">
       <header className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 gap-3">
-        <h1 className="text-xl sm:text-2xl font-bold">{appConfig.title}</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl sm:text-2xl font-bold">{appConfig.title}</h1>
+          <nav className="inline-flex rounded-lg border border-border overflow-hidden">
+            <button onClick={()=>setPrimary('apps')} className={`px-3 py-1 text-sm ${primary==='apps'?'bg-primary text-primary-foreground':'bg-card hover:bg-card-hover'}`}>Apps</button>
+            <button onClick={()=>setPrimary('wallpapers')} className={`px-3 py-1 text-sm ${primary==='wallpapers'?'bg-primary text-primary-foreground':'bg-card hover:bg-card-hover'}`}>Wallpapers</button>
+          </nav>
+        </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <button
@@ -132,7 +143,7 @@ export default function App() {
         </div>
       )}
 
-      {!adminMode && (
+      {!adminMode && primary==='apps' && (
         <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row flex-wrap gap-3 items-start sm:items-center">
           <input
             type="text"
@@ -183,7 +194,7 @@ export default function App() {
 
       {adminMode ? (
         <AdminPanel />
-      ) : (
+      ) : primary==='apps' ? (
         <>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 sm:gap-3 md:gap-4">
             {filteredAndSortedApps.map((app) => (
@@ -192,6 +203,27 @@ export default function App() {
           </div>
           <DetailsModal app={detailsApp} onClose={() => setDetailsApp(null)} />
           <AddAppModal isOpen={showAdd} onClose={() => setShowAdd(false)} />
+        </>
+      ) : (
+        <>
+          {!adminMode && (
+            <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row flex-wrap gap-3 items-start sm:items-center">
+              <input
+                type="text"
+                value={wallSearch}
+                onChange={(e) => setWallSearch(e.target.value)}
+                placeholder="Search wallpapers..."
+                className="w-full sm:w-auto bg-background border border-border rounded px-3 py-1"
+              />
+            </div>
+          )}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+            {wallpapers
+              .filter(w => wallSearch.trim() ? (w.title.toLowerCase().includes(wallSearch.trim().toLowerCase()) || (w.tags||[]).some(t=>t.toLowerCase().includes(wallSearch.trim().toLowerCase()))) : true)
+              .map((w) => (
+                <WallpaperCard key={w.id} wp={w} />
+              ))}
+          </div>
         </>
       )}
     </div>
