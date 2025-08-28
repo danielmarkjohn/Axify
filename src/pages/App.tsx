@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react'
 import { useStore } from '../store/appStore'
 import AppCard from '../components/AppCard'
@@ -16,7 +17,6 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>(appConfig.text.allCategory)
   const [sortBy, setSortBy] = useState<'name' | 'category' | 'price'>('name')
   const apps = useStore((s) => s.apps)
-  const favorites = useStore((s) => s.favorites)
   const wallpapers = useStore((s) => s.wallpapers)
 
   const categories = [appConfig.text.allCategory, ...appConfig.categories]
@@ -24,7 +24,6 @@ export default function App() {
   const [search, setSearch] = useState('')
   const [wallSearch, setWallSearch] = useState('')
   const [showAdd, setShowAdd] = useState(false)
-  const [onlyFavs, setOnlyFavs] = useState(false)
   const [detailsApp, setDetailsApp] = useState<AppType | null>(null)
 
   const filteredAndSortedApps = useMemo(() => {
@@ -32,10 +31,6 @@ export default function App() {
 
     if (selectedCategory !== appConfig.text.allCategory) {
       filtered = filtered.filter(app => app.category === selectedCategory)
-    }
-
-    if (onlyFavs) {
-      filtered = filtered.filter(app => favorites[app.id])
     }
 
     const q = search.trim().toLowerCase()
@@ -60,7 +55,7 @@ export default function App() {
           return 0
       }
     })
-  }, [apps, favorites, selectedCategory, sortBy, search, onlyFavs])
+  }, [apps, selectedCategory, sortBy, search])
 
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false)
   const [password, setPassword] = useState('')
@@ -154,15 +149,6 @@ export default function App() {
           />
 
           <div className="flex flex-wrap gap-3 w-full sm:w-auto">
-            <label className="inline-flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={onlyFavs}
-                onChange={(e) => setOnlyFavs(e.target.checked)}
-              />
-              {appConfig.text.favoritesOnlyLabel}
-            </label>
-
             <div className="flex items-center gap-2">
               <label className="font-medium">{appConfig.text.categoryLabel}</label>
               <select
