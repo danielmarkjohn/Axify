@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useStore } from '../store/appStore'
 import AppCard from '../components/AppCard'
 import AdminPanel from './AdminPanel'
@@ -9,15 +9,29 @@ import AddAppModal from '../components/AddAppModal'
 import WallpaperCard from '../components/WallpaperCard'
 import { appConfig } from '../config/appConfig'
 import type { AppType } from '../types/app'
-import type { Wallpaper } from '../types/wallpaper'
 
 export default function App() {
   const [adminMode, setAdminMode] = useState(false)
   const [primary, setPrimary] = useState<'apps' | 'wallpapers'>('apps')
   const [selectedCategory, setSelectedCategory] = useState<string>(appConfig.text.allCategory)
   const [sortBy, setSortBy] = useState<'name' | 'category' | 'price'>('name')
+  
   const apps = useStore((s) => s.apps)
   const wallpapers = useStore((s) => s.wallpapers)
+  const { apiConfig, isLoadingConfig, fetchConfig } = useStore()
+  
+  // Use API config or fallback to local config
+  const currentConfig = apiConfig || appConfig
+
+  useEffect(() => {
+    fetchConfig()
+  }, [fetchConfig, ])
+
+    useEffect(() => {
+      if(appConfig) {
+        console.log('API Config', apiConfig)
+      }
+  }, [apiConfig])
 
   const categories = [appConfig.text.allCategory, ...appConfig.categories]
 
@@ -70,7 +84,7 @@ export default function App() {
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (password === appConfig.adminPassword) {
+    if (password === currentConfig.adminPassword) {
       setAdminMode(true)
       setShowPasswordPrompt(false)
       setPassword('')

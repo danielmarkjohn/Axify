@@ -28,13 +28,13 @@ export const defaultApps: AppType[] = [
     description: 'Discover AI tools and integrations from Axsphere.',
     tags: ['ai', 'integrations']
   },
-    {
+  {
     id: '4',
-    name: 'Axify Store',
-    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/store',
-    link: 'https://store.axsphere.in/',
+    name: 'Spacer Racing',
+    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/ax-spacer',
+    link: 'https://spaceracing.axsphere.in/',
     category: 'Free',
-    description: 'Discover All Apps/Tools from Axsphere.',
-    tags: ['store', 'apps']
+    description: 'Racing Game.',
+    tags: ['gaming', 'race']
   }
 ]

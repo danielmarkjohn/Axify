@@ -3,6 +3,7 @@ import { AppType } from '../types/app'
 import { Wallpaper } from '../types/wallpaper'
 import { defaultApps } from '../config/defaultApps'
 import { defaultWallpapers } from '../config/defaultWallpapers'
+import { apiService, ApiAppConfig } from '../services/api'
 
 type State = {
   // Apps
@@ -15,6 +16,11 @@ type State = {
   wallpapers: Wallpaper[]
   addWallpaper: (wall: Wallpaper) => void
   removeWallpaper: (id: string) => void
+  // API Config
+  apiConfig: ApiAppConfig | null
+  isLoadingConfig: boolean
+  configError: string | null
+  fetchConfig: () => Promise<void>
 }
 
 const loadFavorites = (): Record<string, boolean> => {
@@ -36,6 +42,23 @@ export const useStore = create<State>((set, get) => ({
   apps: defaultApps,
   favorites: loadFavorites(),
   wallpapers: defaultWallpapers,
+  apiConfig: null,
+  isLoadingConfig: false,
+  configError: null,
+  
+  fetchConfig: async () => {
+    set({ isLoadingConfig: true, configError: null })
+    try {
+      const config = await apiService.getAppConfig()
+      set({ apiConfig: config, isLoadingConfig: false })
+    } catch (error) {
+      set({ 
+        configError: error instanceof Error ? error.message : 'Failed to load config',
+        isLoadingConfig: false 
+      })
+    }
+  },
+  
   toggleFavorite: (id) => {
     const current = { ...get().favorites }
     current[id] = !current[id]
