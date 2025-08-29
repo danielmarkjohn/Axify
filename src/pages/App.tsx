@@ -9,70 +9,51 @@ import AddAppModal from '../components/AddAppModal'
 import WallpaperCard from '../components/WallpaperCard'
 import { appConfig } from '../config/appConfig'
 import type { AppType } from '../types/app'
+import Loader from '../components/Loader'
 
 export default function App() {
+  // Move ALL hooks to the top before any conditional returns
   const [adminMode, setAdminMode] = useState(false)
   const [primary, setPrimary] = useState<'apps' | 'wallpapers'>('apps')
-  const [selectedCategory, setSelectedCategory] = useState<string>(appConfig.text.allCategory)
-  const [sortBy, setSortBy] = useState<'name' | 'category' | 'price'>('name')
-  
-  const apps = useStore((s) => s.apps)
-  const wallpapers = useStore((s) => s.wallpapers)
-  const { apiConfig, isLoadingConfig, fetchConfig } = useStore()
-  
-  // Use API config or fallback to local config
-  const currentConfig = apiConfig || appConfig
-
-  useEffect(() => {
-    fetchConfig()
-  }, [fetchConfig, ])
-
-    useEffect(() => {
-      if(appConfig) {
-        console.log('API Config', apiConfig)
-      }
-  }, [apiConfig])
-
-  const categories = [appConfig.text.allCategory, ...appConfig.categories]
-
   const [search, setSearch] = useState('')
   const [wallSearch, setWallSearch] = useState('')
   const [showAdd, setShowAdd] = useState(false)
-  const [detailsApp, setDetailsApp] = useState<AppType | null>(null)
-
-  const filteredAndSortedApps = useMemo(() => {
-    let filtered = [...apps]
-
-    if (selectedCategory !== appConfig.text.allCategory) {
-      filtered = filtered.filter(app => app.category === selectedCategory)
-    }
-
-    const q = search.trim().toLowerCase()
-    if (q) {
-      filtered = filtered.filter(app => {
-        const inName = app.name.toLowerCase().includes(q)
-        const inCategory = app.category.toLowerCase().includes(q as any)
-        const inTags = app.tags?.some(t => t.toLowerCase().includes(q))
-        return inName || inCategory || inTags
-      })
-    }
-
-    return filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'name':
-          return a.name.localeCompare(b.name)
-        case 'category':
-          return a.category.localeCompare(b.category)
-        case 'price':
-          return (a.price || 0) - (b.price || 0)
-        default:
-          return 0
-      }
-    })
-  }, [apps, selectedCategory, sortBy, search])
-
+  const [detailsApp, setDetailsApp] = useState<any>(null)
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false)
   const [password, setPassword] = useState('')
+  
+  const apps = useStore((s) => s.apps)
+  const wallpapers = useStore((s) => s.wallpapers)
+  const { apiConfig, isLoadingConfig, fetchConfig, configError } = useStore()
+  
+  // Use API config or fallback to local config
+  const currentConfig = appConfig
+
+  useEffect(() => {
+    fetchConfig()
+  }, [fetchConfig])
+
+  const filteredApps = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    if (!q) return apps
+    
+    return apps.filter(app => {
+      const inName = app.name.toLowerCase().includes(q)
+      const inCategory = app.category.toLowerCase().includes(q)
+      const inTags = app.tags?.some(t => t.toLowerCase().includes(q))
+      return inName || inCategory || inTags
+    })
+  }, [apps, search])
+
+  // NOW we can do conditional returns after all hooks are declared
+  if (isLoadingConfig) {
+    return <Loader message="Loading configuration..." />
+  }
+
+  // Show error state if config failed to load
+  if (configError && !apiConfig) {
+    console.warn('Failed to load API config, using local config:', configError)
+  }
 
   const handleAdminToggle = () => {
     if (adminMode) {
@@ -89,7 +70,7 @@ export default function App() {
       setShowPasswordPrompt(false)
       setPassword('')
     } else {
-      alert(appConfig.text.incorrectPasswordMessage)
+      alert(currentConfig.text.incorrectPasswordMessage)
     }
   }
 
@@ -99,52 +80,76 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen p-2 sm:p-4 bg-background text-foreground">
-      <header className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 gap-3">
-        <div className="flex items-center gap-4">
-          <h1 className="text-xl sm:text-2xl font-bold">{appConfig.title}</h1>
-          <nav className="inline-flex rounded-lg border border-border overflow-hidden">
-            <button onClick={()=>setPrimary('apps')} className={`px-3 py-1 text-sm ${primary==='apps'?'bg-primary text-primary-foreground':'bg-card hover:bg-card-hover'}`}>Apps</button>
-            <button onClick={()=>setPrimary('wallpapers')} className={`px-3 py-1 text-sm ${primary==='wallpapers'?'bg-primary text-primary-foreground':'bg-card hover:bg-card-hover'}`}>Wallpapers</button>
-          </nav>
-        </div>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <button
-            onClick={handleAdminToggle}
-            className="bg-primary px-3 py-1 rounded hover:bg-primary-hover text-primary-foreground"
-          >
-            {adminMode ? appConfig.text.userViewButton : appConfig.text.adminButton}
-          </button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+      {/* Gaming-style header */}
+      <header className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-700/20 to-gray-600/20"></div>
+        <div className="relative p-4 sm:p-6">
+          <div className="flex flex-col gap-4">
+            {/* Title and Admin Button Row */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-300 to-gray-100 bg-clip-text text-transparent">
+                {currentConfig.title}
+              </h1>
+            </div>
+
+            {/* Navigation Tabs - Vertical on Mobile */}
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-0">
+              <nav className="flex flex-col sm:flex-row rounded-xl bg-black/30 backdrop-blur-sm border border-white/10 overflow-hidden">
+                <button 
+                  onClick={() => setPrimary('apps')} 
+                  className={`px-6 py-3 text-sm font-medium transition-all duration-200 ${
+                    primary === 'apps' 
+                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg' 
+                      : 'text-gray-300 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  🎮 Apps
+                </button>
+                <button 
+                  onClick={() => setPrimary('wallpapers')} 
+                  className={`px-6 py-3 text-sm font-medium transition-all duration-200 ${
+                    primary === 'wallpapers' 
+                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg' 
+                      : 'text-gray-300 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  🖼️ Wallpapers
+                </button>
+              </nav>
+            </div>
+          </div>
         </div>
       </header>
 
       {showPasswordPrompt && (
-        <div className="fixed inset-0 bg-overlay flex items-center justify-center z-50">
-          <div className="bg-card p-6 rounded-lg shadow-lg border border-border">
-            <h2 className="text-lg font-bold mb-4">{appConfig.text.adminPasswordPrompt}</h2>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-2xl shadow-2xl border border-gray-500/30 max-w-md w-full mx-4">
+            <h2 className="text-xl font-bold mb-4 text-center bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+              {currentConfig.text.adminPasswordPrompt}
+            </h2>
             <form onSubmit={handlePasswordSubmit}>
               <input
                 type="password"
-                placeholder={appConfig.text.adminPasswordPlaceholder}
+                placeholder={currentConfig.text.adminPasswordPlaceholder}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-2 border border-border rounded mb-4 bg-background text-foreground"
+                className="w-full p-3 border border-gray-500/30 rounded-lg mb-4 bg-black/50 text-white placeholder-gray-400 focus:border-gray-400 focus:outline-none"
                 autoFocus
               />
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <button
                   type="submit"
-                  className="bg-primary px-4 py-2 rounded text-primary-foreground hover:bg-primary-hover"
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-4 py-2 rounded-lg text-white font-medium transition-all duration-200"
                 >
-                  {appConfig.text.loginButton}
+                  {currentConfig.text.loginButton}
                 </button>
                 <button
                   type="button"
                   onClick={handlePasswordCancel}
-                  className="bg-secondary px-4 py-2 rounded text-secondary-foreground hover:bg-secondary-hover"
+                  className="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white font-medium transition-all duration-200"
                 >
-                  {appConfig.text.cancelButton}
+                  {currentConfig.text.cancelButton}
                 </button>
               </div>
             </form>
@@ -152,80 +157,59 @@ export default function App() {
         </div>
       )}
 
-      {!adminMode && primary==='apps' && (
-        <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row flex-wrap gap-3 items-start sm:items-center">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={appConfig.text.searchPlaceholder}
-            className="w-full sm:w-auto bg-background border border-border rounded px-3 py-1"
-          />
-
-          <div className="flex flex-wrap gap-3 w-full sm:w-auto">
-            <div className="flex items-center gap-2">
-              <label className="font-medium">{appConfig.text.categoryLabel}</label>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-background border border-border rounded px-3 py-1"
-              >
-                {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
-                ))}
-              </select>
+      <div className="p-4 sm:p-6">
+        {adminMode ? (
+          <AdminPanel />
+        ) : primary === 'apps' ? (
+          <>
+            {/* Search Bar */}
+            <div className="mb-6">
+              <div className="relative max-w-md">
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="🔍 Search apps..."
+                  className="w-full pl-4 pr-4 py-3 rounded-xl bg-black/30 backdrop-blur-sm border border-white/10 text-white placeholder-gray-400 focus:border-purple-400 focus:outline-none transition-all duration-200"
+                />
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <label className="font-medium">{appConfig.text.sortByLabel}</label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'name' | 'category' | 'price')}
-                className="bg-background border border-border rounded px-3 py-1"
-              >
-                <option value="name">{appConfig.text.sortOptions.name}</option>
-                <option value="category">{appConfig.text.sortOptions.category}</option>
-                <option value="price">{appConfig.text.sortOptions.price}</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {adminMode ? (
-        <AdminPanel />
-      ) : primary==='apps' ? (
-        <>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 sm:gap-3 md:gap-4">
-            {filteredAndSortedApps.map((app) => (
-              <AppCard key={app.id} app={app} onDetails={(a) => setDetailsApp(a)} />
-            ))}
-          </div>
-          <DetailsModal app={detailsApp} onClose={() => setDetailsApp(null)} />
-          <AddAppModal isOpen={showAdd} onClose={() => setShowAdd(false)} />
-        </>
-      ) : (
-        <>
-          {!adminMode && (
-            <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row flex-wrap gap-3 items-start sm:items-center">
-              <input
-                type="text"
-                value={wallSearch}
-                onChange={(e) => setWallSearch(e.target.value)}
-                placeholder="Search wallpapers..."
-                className="w-full sm:w-auto bg-background border border-border rounded px-3 py-1"
-              />
-            </div>
-          )}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
-            {wallpapers
-              .filter(w => wallSearch.trim() ? (w.title.toLowerCase().includes(wallSearch.trim().toLowerCase()) || (w.tags||[]).some(t=>t.toLowerCase().includes(wallSearch.trim().toLowerCase()))) : true)
-              .map((w) => (
-                <WallpaperCard key={w.id} wp={w} />
+            {/* Apps Grid */}
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4">
+              {filteredApps.map((app) => (
+                <AppCard key={app.id} app={app} onDetails={(a) => setDetailsApp(a)} />
               ))}
-          </div>
-        </>
-      )}
+            </div>
+            <DetailsModal app={detailsApp} onClose={() => setDetailsApp(null)} />
+            <AddAppModal isOpen={showAdd} onClose={() => setShowAdd(false)} />
+          </>
+        ) : (
+          <>
+            {/* Wallpaper Search */}
+            <div className="mb-6">
+              <div className="relative max-w-md">
+                <input
+                  type="text"
+                  value={wallSearch}
+                  onChange={(e) => setWallSearch(e.target.value)}
+                  placeholder="🔍 Search wallpapers..."
+                  className="w-full pl-4 pr-4 py-3 rounded-xl bg-black/30 backdrop-blur-sm border border-white/10 text-white placeholder-gray-400 focus:border-purple-400 focus:outline-none transition-all duration-200"
+                />
+              </div>
+            </div>
+
+            {/* Wallpapers Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+              {wallpapers
+                .filter(w => wallSearch.trim() ? (w.title.toLowerCase().includes(wallSearch.trim().toLowerCase()) || (w.tags||[]).some(t=>t.toLowerCase().includes(wallSearch.trim().toLowerCase()))) : true)
+                .map((w) => (
+                  <WallpaperCard key={w.id} wp={w} />
+                ))}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   )
 }
