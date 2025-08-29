@@ -37,7 +37,6 @@ export const defaultApps: AppType[] = [
     description: 'Racing Game.',
     tags: ['gaming', 'race']
   },
-  ,
   {
     id: '4',
     name: 'Ax Invoicer',
@@ -47,7 +46,6 @@ export const defaultApps: AppType[] = [
     description: 'Invoicer App.',
     tags: ['invoice', 'pdf']
   },
-  ,
   {
     id: '4',
     name: 'Ax Health',
