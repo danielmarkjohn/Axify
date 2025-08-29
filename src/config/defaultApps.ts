@@ -4,7 +4,7 @@ export const defaultApps: AppType[] = [
   {
     id: '1',
     name: 'AxGaming',
-    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/gaming',
+    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/ax-gaming',
     link: 'https://gaming.axsphere.in/',
     category: 'Free',
     description: 'Track your Game stats and game library with rich charts.',
@@ -13,7 +13,7 @@ export const defaultApps: AppType[] = [
   {
     id: '2',
     name: 'AxTools',
-    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/tools',
+    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/ax-tools',
     link: 'https://tools.axsphere.in/',
     category: 'Free',
     description: 'Advanced toolbox for automation and productivity.',
@@ -22,7 +22,7 @@ export const defaultApps: AppType[] = [
   {
     id: '3',
     name: 'AxHub',
-    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/axsphere',
+    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/ax-hub',
     link: 'https://axsphere.in/',
     category: 'Free',
     description: 'Discover AI tools and integrations from Axsphere.',
@@ -36,5 +36,25 @@ export const defaultApps: AppType[] = [
     category: 'Free',
     description: 'Racing Game.',
     tags: ['gaming', 'race']
+  },
+  ,
+  {
+    id: '4',
+    name: 'Ax Invoicer',
+    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/ax-invoice',
+    link: 'https://invoicer.axsphere.in/',
+    category: 'Free',
+    description: 'Invoicer App.',
+    tags: ['invoice', 'pdf']
+  },
+  ,
+  {
+    id: '4',
+    name: 'Ax Health',
+    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/ax-health',
+    link: 'https://health.axsphere.in/',
+    category: 'Free',
+    description: 'Health App.',
+    tags: ['health', 'complaints']
   }
 ]
