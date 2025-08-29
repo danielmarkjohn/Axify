@@ -30,17 +30,8 @@ export const defaultApps: AppType[] = [
   },
   {
     id: '4',
-    name: 'Spacer Racing',
-    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/ax-spacer',
-    link: 'https://spaceracing.axsphere.in/',
-    category: 'Free',
-    description: 'Racing Game.',
-    tags: ['gaming', 'race']
-  },
-  {
-    id: '4',
     name: 'Ax Invoicer',
-    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/ax-invoice',
+    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/ax-invoicer',
     link: 'https://invoicer.axsphere.in/',
     category: 'Free',
     description: 'Invoicer App.',
@@ -54,5 +45,14 @@ export const defaultApps: AppType[] = [
     category: 'Free',
     description: 'Health App.',
     tags: ['health', 'complaints']
-  }
+  },
+  {
+    id: '4',
+    name: 'Spacer Racing',
+    icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/ax-spacer',
+    link: 'https://spaceracing.axsphere.in/',
+    category: 'Free',
+    description: 'Racing Game.',
+    tags: ['gaming', 'race']
+  },
 ]
