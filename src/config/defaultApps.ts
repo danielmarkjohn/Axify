@@ -48,7 +48,7 @@ export const defaultApps: AppType[] = [
   },
   {
     id: '6',
-    name: 'Spacer Racing',
+    name: 'Spacer Racing (By HexGL)',
     icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/ax-spacer',
     link: 'https://spaceracing.axsphere.in/',
     category: 'Gaming',
