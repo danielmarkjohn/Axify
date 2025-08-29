@@ -141,3 +141,18 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Custom select styling */
+select option {
+  background-color: #1f2937;
+  color: white;
+  padding: 8px 12px;
+}
+
+select option:hover {
+  background-color: #374151;
+}
+
+select option:checked {
+  background-color: #8b5cf6;
+}
