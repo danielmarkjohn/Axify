@@ -10,8 +10,6 @@ import WallpapersSection from '../components/WallpapersSection'
 export default function App() {
   const [adminMode, setAdminMode] = useState(false)
   const [primary, setPrimary] = useState<'apps' | 'wallpapers'>('apps')
-  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false)
-  const [password, setPassword] = useState('')
   
   const { apiConfig, isLoadingConfig, fetchConfig, configError } = useStore()
   
@@ -22,38 +20,14 @@ export default function App() {
     fetchConfig()
   }, [fetchConfig])
 
-  // NOW we can do conditional returns after all hooks are declared
-  if (isLoadingConfig) {
-    return <Loader message="Loading configuration..." />
-  }
+  // // NOW we can do conditional returns after all hooks are declared
+  // if (isLoadingConfig) {
+  //   return <Loader message="Loading configuration..." />
+  // }
 
   // Show error state if config failed to load
   if (configError && !apiConfig) {
     console.warn('Failed to load API config, using local config:', configError)
-  }
-
-  const handleAdminToggle = () => {
-    if (adminMode) {
-      setAdminMode(false)
-    } else {
-      setShowPasswordPrompt(true)
-    }
-  }
-
-  const handlePasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (password === currentConfig.adminPassword) {
-      setAdminMode(true)
-      setShowPasswordPrompt(false)
-      setPassword('')
-    } else {
-      alert(currentConfig.text.incorrectPasswordMessage)
-    }
-  }
-
-  const handlePasswordCancel = () => {
-    setShowPasswordPrompt(false)
-    setPassword('')
   }
 
   return (
