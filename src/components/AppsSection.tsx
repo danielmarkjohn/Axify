@@ -9,7 +9,7 @@ export default function AppsSection() {
   const [search, setSearch] = useState('')
   const [showAdd, setShowAdd] = useState(false)
   const [detailsApp, setDetailsApp] = useState<AppType | null>(null)
-  const [appCategory, setAppCategory] = useState<'all' | 'apps' | 'games'>('all')
+  const [appCategory, setAppCategory] = useState<'all' | 'apps' | 'games'>('apps') // Changed default to 'apps'
   const [filterBy, setFilterBy] = useState<'all' | 'category' | 'tags'>('all')
   
   const apps = useStore((s) => s.apps)
@@ -18,7 +18,7 @@ export default function AppsSection() {
     const q = search.trim().toLowerCase()
     let filtered = apps
     
-    // Filter by app category (Apps vs Games)
+    // Filter by app category (Apps vs Games) - now defaults to Apps only
     if (appCategory === 'apps') {
       filtered = filtered.filter(app => app.category === 'Apps')
     } else if (appCategory === 'games') {
@@ -63,9 +63,9 @@ export default function AppsSection() {
               onChange={(e) => setAppCategory(e.target.value as any)}
               className="appearance-none px-4 py-3 pr-10 rounded-xl bg-black/30 backdrop-blur-sm border border-white/10 text-white focus:border-purple-400 focus:outline-none transition-all duration-200 cursor-pointer"
             >
-              <option value="all">All</option>
               <option value="apps">Apps</option>
               <option value="games">Games</option>
+              <option value="all">All</option>
             </select>
             <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
               <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

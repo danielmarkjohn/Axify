@@ -6,7 +6,7 @@ export const defaultApps: AppType[] = [
     name: 'AxGaming',
     icon: 'https://cu4qgctmgixbz3il.public.blob.vercel-storage.com/ax-gaming',
     link: 'https://gaming.axsphere.in/',
-    category: 'Gaming',
+    category: 'Apps',
     description: 'Track your Game stats and game library with rich charts.',
     tags: ['games', 'steam', 'charts']
   },
